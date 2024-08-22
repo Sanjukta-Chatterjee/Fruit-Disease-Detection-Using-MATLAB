@@ -1,0 +1,28 @@
+% Read the input fruit image
+fruitImage = imread('Mango.jpeg');
+% Display the original fruit image
+figure;
+imshow(fruitImage);
+title("Original Fruit Image")
+% Convert the image to the Lab color
+labImage = rgb2lab(fruitImage);
+% Extract the 'a' and 'b' color channels
+aChannel = labImage(:,:,2);
+bChannel = labImage(:,:,3);
+% Create a mask based on color
+ColorThreshold = 20;  % Adjust this threshold to tune the color segmentation
+mask = (aChannel > ColorThreshold) & (bChannel > ColorThreshold);
+% Apply morphological operations to enhance the mask
+se = strel('disk', 5);  % Adjust the structuring element size as needed
+mask = imclose(mask, se);
+mask = imfill(mask, 'holes');
+% Display the mask
+figure;
+imshow(mask);
+title("Mask");
+% Calculate the disease percentage
+totalPixels = numel(mask);
+diseasePixels = sum(mask(:));
+diseasePercentage = (diseasePixels / totalPixels) * 100;
+% Display the disease percentage
+fprintf('Disease Percentage: %.2f%%\n', diseasePercentage);
